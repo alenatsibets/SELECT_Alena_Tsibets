@@ -1,0 +1,19 @@
+SELECT
+    f.film_id,
+    f.title,
+    f.rental_duration,
+	f.rating,
+	CASE
+		WHEN f.rating = 'G' THEN 'all'
+		WHEN f.rating = 'PG' THEN 'with parents'
+		WHEN f.rating = 'PG-13' THEN 'under 13'
+		WHEN f.rating = 'R' THEN 'under 17'
+		WHEN f.rating = 'NC-17' THEN 'under 17, even eldier'
+	END as the_most_rent_duration
+FROM
+    film f
+GROUP BY
+    f.film_id, f.title, f.rental_duration
+ORDER BY
+    f.rental_duration desc
+LIMIT 5; *
