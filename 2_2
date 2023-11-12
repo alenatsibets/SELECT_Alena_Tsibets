@@ -1,0 +1,25 @@
+SELECT
+    film_id,
+    title,
+    rental_duration,
+    rating,
+    CASE
+        WHEN rating = 'G' THEN 'all'
+        WHEN rating = 'PG' THEN 'with parents'
+        WHEN rating = 'PG-13' THEN 'under 13'
+        WHEN rating = 'R' THEN 'under 17'
+        WHEN rating = 'NC-17' THEN 'under 17, even elder'
+    END as the_most_rent_duration
+FROM (
+    SELECT
+        f.film_id,
+        f.title,
+        f.rental_duration,
+        f.rating,
+        MAX(f.rental_duration) OVER (PARTITION BY f.rating) AS max_rental_duration
+    FROM
+        film f
+) AS max_rental
+WHERE
+    rental_duration = max_rental_duration
+LIMIT 5;
