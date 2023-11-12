@@ -1,0 +1,13 @@
+SELECT
+    DISTINCT ON (st.staff_id)
+    st.staff_id,
+    CONCAT(st.first_name, ' ', st.last_name) AS full_name,
+    SUM(pay.amount) OVER (PARTITION BY st.staff_id) AS total_revenue
+FROM
+    staff st
+INNER JOIN
+    payment pay ON st.staff_id = pay.staff_id
+WHERE
+    EXTRACT(YEAR FROM pay.payment_date) = 2017
+ORDER BY
+    st.staff_id, total_revenue desc;
