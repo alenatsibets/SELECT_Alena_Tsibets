@@ -1,0 +1,20 @@
+SELECT
+    a.actor_id,
+    a.first_name,
+    a.last_name
+FROM
+    actor a
+JOIN
+    film_actor fa ON a.actor_id = fa.actor_id
+JOIN
+    film f ON fa.film_id = f.film_id
+WHERE
+    f.release_year = (SELECT MIN(release_year) FROM film)
+    AND NOT EXISTS (
+        SELECT 1
+        FROM film_actor fa2
+        WHERE fa2.actor_id = a.actor_id
+          AND EXTRACT(YEAR FROM fa2.last_update) > f.release_year
+    )
+ORDER BY
+    a.actor_id;
