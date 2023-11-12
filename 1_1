@@ -1,0 +1,14 @@
+SELECT
+    st. staff_id,
+	st. first_name || ' ' || st.last_name AS full_name,
+    SUM(pay.amount) AS total_revenue
+FROM
+    staff st
+inner JOIN
+    payment pay ON st.staff_id = pay.staff_id
+WHERE
+    EXTRACT(YEAR FROM pay.payment_date) = 2017
+GROUP BY
+    st.staff_id, full_name
+ORDER BY
+    total_revenue desc
