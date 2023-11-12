@@ -1,0 +1,36 @@
+WITH OldestRelease AS (
+    SELECT
+        MIN(f.release_year) AS oldest_release_year
+    FROM
+        film f
+),
+ActorFilmRelease AS (
+    SELECT
+        fa.actor_id,
+        MIN(f.release_year) AS first_film_release_year,
+        MAX(f.release_year) AS last_film_release_year
+    FROM
+        film_actor fa
+    JOIN
+        film f ON fa.film_id = f.film_id
+    GROUP BY
+        fa.actor_id
+)
+SELECT
+    a.actor_id,
+    a.first_name,
+    a.last_name,
+    afr.first_film_release_year,
+    afr.last_film_release_year,
+    a.last_update AS actor_last_update
+FROM
+    actor a
+JOIN
+    ActorFilmRelease afr ON a.actor_id = afr.actor_id
+JOIN
+    OldestRelease orr ON 1 = 1 
+WHERE
+    afr.first_film_release_year = orr.oldest_release_year
+    AND EXTRACT(YEAR FROM a.last_update) <= orr.oldest_release_year
+ORDER BY
+    afr.first_film_release_year;
